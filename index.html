@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>جدول والیبال</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="color-scheme" content="light"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="والیبال"><meta name="theme-color" content="#3a9bbd">
+<meta name="color-scheme" content="light"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="والیبال"><meta name="theme-color" content="#fdd23c">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
 <style>
-:root{color-scheme:light;--bg:#f6fafc;--card:#fff;--ink:#1d3b47;--mut:#62808c;--pri:#3a9bbd;--acc:#f2b632;--line:#dcebf1;--row:#eef7fb;--bad:#d04a3a;--ok:#2e9e6b}
+:root{color-scheme:light;--bg:#fffaf0;--card:#fffefa;--ink:#35290f;--mut:#8a7648;--pri:#fdd23c;--acc:#fdd23c;--line:#f0e5c8;--row:#fff6df;--bad:#b45309;--ok:#8a5a00}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,Tahoma,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
-header{display:flex;align-items:center;gap:10px;background:var(--pri);color:#fff;padding:14px 16px;font-size:20px;font-weight:700}
+header{display:flex;align-items:center;gap:10px;background:var(--pri);color:var(--ink);padding:14px 16px;font-size:20px;font-weight:700}
 nav{display:flex;background:var(--card);border-bottom:2px solid var(--line);position:sticky;top:0;z-index:5}
 nav button{flex:1;padding:12px 2px;border:0;background:none;color:var(--mut);font:inherit;font-size:13px;border-bottom:3px solid transparent;margin-bottom:-2px}
-nav button.on{color:var(--pri);border-color:var(--acc);font-weight:700}
+nav button.on{color:var(--ink);border-color:var(--acc);font-weight:700}
 main{padding:12px;max-width:1600px;width:100%;margin:auto}
 section{display:none}section.on{display:block}
 h3{margin:14px 0 8px;font-size:16px}
@@ -24,15 +24,15 @@ h3{margin:14px 0 8px;font-size:16px}
 .wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--line);margin-bottom:10px}
 table{border-collapse:collapse;width:100%;min-width:640px;background:var(--card);text-align:center;font-size:14px}
 table.w1{min-width:1150px}table.w2{min-width:760px}
-th{background:var(--pri);color:#fff;padding:10px 6px;white-space:nowrap;font-size:13px}
+th{background:var(--pri);color:var(--ink);padding:10px 6px;white-space:nowrap;font-size:13px}
 td{padding:6px 4px;border-top:1px solid var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}
 tr:nth-child(even) td{background:var(--row)}
 td.t{font-weight:700}
 td input,td select{width:100%;min-width:70px;padding:6px;font-size:14px}
 td.ss{min-width:120px}td.ss input{width:50px;min-width:0;text-align:center;direction:ltr;display:inline-block;margin:0 2px}
 input,select,button.b{font:inherit;font-size:16px;padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
-button.b{background:var(--pri);color:#fff;border:0;font-weight:700;font-size:14px;padding:9px 12px}
-button.b.o{background:var(--card);color:var(--pri);border:1px solid var(--pri)}
+button.b{background:var(--pri);color:var(--ink);border:0;font-weight:700;font-size:14px;padding:9px 12px}
+button.b.o{background:var(--card);color:var(--ink);border:1px solid var(--pri)}
 button.d{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:14px;color:var(--ink);min-width:92px}
 button.x{background:none;border:0;color:var(--bad);font-size:16px;padding:4px 8px}
 .r{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
@@ -40,17 +40,17 @@ button.x{background:none;border:0;color:var(--bad);font-size:16px;padding:4px 8p
 .li:first-child{border:0}.li input[type=text],.li input:not([type]){flex:1;margin-inline-end:8px;min-width:0}
 .ok{color:var(--ok);font-weight:700}.no{color:var(--bad);font-weight:700}
 .mut{color:var(--mut);font-size:13px;text-align:center;padding:10px}
-#modal{position:fixed;inset:0;background:rgba(20,40,50,.45);display:none;align-items:center;justify-content:center;z-index:20;padding:16px}
+#modal{position:fixed;inset:0;background:rgba(53,41,15,.45);display:none;align-items:center;justify-content:center;z-index:20;padding:16px}
 .cal{background:var(--card);border-radius:12px;padding:14px;width:100%;max-width:340px;max-height:85vh;overflow:auto}
 .ch{display:flex;justify-content:space-between;align-items:center}
 .cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:6px 0}
 .wk span{text-align:center;color:var(--mut);font-size:13px}
 .dd{padding:9px 0;border:0;border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
-.dd.on{background:var(--pri);color:#fff}.dd.td{outline:2px solid var(--acc)}
-.sp{display:inline-flex;flex-direction:column;align-items:center}.sp .x{padding:2px 8px;line-height:1;color:var(--pri)}.sp b{font-size:18px}
+.dd.on{background:var(--pri);color:var(--ink);font-weight:700}.dd.td{outline:2px solid var(--acc)}
+.sp{display:inline-flex;flex-direction:column;align-items:center}.sp .x{padding:2px 8px;line-height:1;color:var(--ink)}.sp b{font-size:18px}
 .tm{display:flex;align-items:center;gap:4px}
 .fl{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:8px 0}.fl label{color:var(--mut);font-size:14px;min-width:60px}.fl select,.fl input{flex:1;min-width:0}.fl input.sn{width:60px;flex:none;text-align:center}
-th,td{border-left:1px solid #d3e3ea}
+th,td{border-left:1px solid #ecdfbd}
 th:last-child,td:last-child{border-left:0}
 .dd:disabled{opacity:.22;text-decoration:line-through}
 td{padding:8px 8px}th{padding:10px 8px}
@@ -58,12 +58,14 @@ body{padding-left:max(0px,env(safe-area-inset-left));padding-right:max(0px,env(s
 @media(min-width:1000px){table,table.w1,table.w2{min-width:0}main{padding:16px 20px}td,th{font-size:15px}}
 @media(max-width:999px) and (min-width:600px){td,th{font-size:13px;padding:6px 5px}}
 @media(orientation:landscape) and (max-height:520px){header{padding:6px 14px;font-size:16px}header img{width:26px;height:26px}nav button{padding:7px 2px}main{padding:8px}.cal{max-height:92vh}}
+.tg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.tg select{width:100%}
+.sc{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mut)}.sc input{flex:1;min-width:0;width:100%;text-align:center;direction:ltr}
 button:disabled{opacity:.4}
-#toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#1d3b47;color:#fff;padding:10px 16px;border-radius:10px;display:none;z-index:30;font-size:14px;max-width:90%}
+#toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#35290f;color:#fffaf0;padding:10px 16px;border-radius:10px;display:none;z-index:30;font-size:14px;max-width:90%}
 </style>
 </head>
 <body>
-<header><img src="logo-white.png" width="34" height="34" alt="">جدول مسابقات والیبال</header>
+<header><img src="logo-dark.png" width="34" height="34" alt="">جدول مسابقات والیبال</header>
 <nav><button data-t="pr" class="on">تمرینات</button><button data-t="mt">برنامه و نتایج</button><button data-t="st">رده‌بندی</button><button data-t="tm">تیم‌ها</button><button data-t="se">تنظیمات</button></nav>
 <main>
 <section id="pr" class="on"></section><section id="mt"></section><section id="st"></section><section id="tm"></section><section id="se"></section>
@@ -145,7 +147,7 @@ const sOpts=(cur,date)=>{const dn=dayName(date),all=S.slots.map(slotLabel),same=
 function fixSlot(o){const dn=dayName(o.date);if(!dn)return;const ok=slotsFor(o.date);if(!ok.includes(o.slot)){o.slot=ok[0]||'';if('min' in o&&o.slot)o.min=slotMin(o.slot)||o.min}}
 const fd=d=>d?`${dayName(d)} ${d}`:'';
 const bar=(k,o={})=>`<div class="r">${o.noImp?'':`<button class="b" data-imp="${k}">ورود از اکسل</button>`}<button class="b" data-exp="${k}">خروج اکسل</button>${o.noImp?'':`<button class="b o" data-tpl="${k}">دریافت قالب</button>`}</div>`;
-const acts=(k,id)=>`<button class="x" style="color:var(--pri)" data-ed="${k}:${id}" title="ویرایش" style="font-size:20px!important">✎</button><button class="x" data-del="${k}:${id}">✕</button>`;
+const acts=(k,id)=>`<button class="x" style="color:var(--ink);font-size:20px!important" data-ed="${k}:${id}" title="ویرایش">✎</button><button class="x" data-del="${k}:${id}">✕</button>`;
 const tOpts=sel=>'<option value="">—</option>'+S.teams.map(t=>`<option value="${t.id}"${t.id===sel?' selected':''}>${esc(t.name)}</option>`).join('');
 const optsOf=(arr,cur)=>arr.map(o=>`<option${o===cur?' selected':''}>${o}</option>`).join('');
 const head=(h,g=[])=>`<thead><tr>${h.map((x,i)=>`<th${g.includes(i)?' class="g"':''}>${x}</th>`).join('')}</tr></thead>`;
@@ -156,7 +158,7 @@ function render(){
  const st=stats();
  $('st').innerHTML=bar('s',{noImp:1})+`<div class="wrap"><table>${head(['رتبه','تیم','بازی','برد','باخت','ست +','ست −','معدل ست','پوئن +','پوئن −','معدل پوئن','وضعیت'])}<tbody>${st.length?st.map((t,i)=>`<tr><td>${i+1}</td><td class="t">${esc(t.name)}</td><td>${t.p}</td><td>${t.w}</td><td>${t.l}</td><td>${t.sw}</td><td>${t.sl}</td><td>${t.sr.toFixed(3)}</td><td>${t.pw}</td><td>${t.pl}</td><td>${t.pr.toFixed(3)}</td><td>${t.done?'پایان':'در حال برگزاری'}</td></tr>`).join(''):'<tr><td colspan="12">اول تیم‌ها را اضافه کنید</td></tr>'}</tbody></table></div><p class="mut">ترتیب: برد بیشتر ← معدل ست ← معدل پوئن ← نتیجه رودررو</p>`;
  const mrows=S.matches.map((g,i)=>{const r=res(g);
-  const set=j=>`<td dir="ltr"${j===0?' class="g"':''}>${g.s[j][0]!==''||g.s[j][1]!==''?esc(g.s[j][0])+' - '+esc(g.s[j][1]):''}</td>`;
+  const set=j=>`<td${j===0?' class="g"':''}>${g.s[j][0]!==''||g.s[j][1]!==''?esc(g.s[j][0])+' - '+esc(g.s[j][1]):''}</td>`;
   return`<tr><td>${i+1}</td><td dir="ltr">${g.date}</td><td>${dayName(g.date)}</td><td>${g.order}</td><td dir="ltr">${esc(tOnly(g.slot))}</td><td class="t g">${esc(nm(g.a))}</td><td class="t">${esc(nm(g.b))}</td>${set(0)}${set(1)}${set(2)}<td class="g">${r.sets.length?r.sa+' - '+r.sb:''}</td><td>${esc(nm(r.w))}</td><td class="${r.fin?'ok':''}">${!r.fin&&!r.sets.length&&S.pp.some(x=>x.id===g.id)?'تعویق شده':r.st}</td><td class="g">${acts('m',g.id)}</td></tr>`}).join('');
  $('mt').innerHTML=bar('m')+`<div class="wrap"><table class="w1">${head(['بازی','تاریخ','روز','ترتیب','سانس','تیم اول','تیم دوم','ست 1','ست 2','ست 3','ست برده','برنده','وضعیت',''],[5,7,10,13])}<tbody>${mrows||'<tr><td colspan="14">بازی‌ای ثبت نشده</td></tr>'}</tbody></table></div><div class="r"><button class="b" data-add="m">+ بازی جدید</button><button class="b o" data-gen="1">ساخت خودکار برنامه</button></div><p class="mut">برای ثبت نتیجه روی «ویرایش» بزنید. وضعیت وقتی «نهایی» می‌شود که یک تیم 2 ست برده باشد.</p>`;
  const prow=S.practices.map((p,i)=>`<tr><td>${i+1}</td><td dir="ltr">${p.date}</td><td>${dayName(p.date)}</td><td class="t">${esc(p.teams.map(nm).join(' / '))}</td><td>${p.teams.length}</td><td dir="ltr">${esc(tOnly(p.slot))}</td><td>${esc(p.min)}</td><td>${esc(p.type)}</td><td>${acts('p',p.id)}</td></tr>`).join('');
@@ -208,7 +210,8 @@ function showEdit(){back=null;const{k,o,isNew}=DR,fl=(l,h)=>`<div class="fl"><la
  const dbtn=d=>`<button class="d" data-pd="1">${d?fd(d):'انتخاب تاریخ'}</button>`;
  if(k==='m'){
   const si=j=>fl('ست '+(j+1),`<span dir="ltr"><input class="sn" type="number" inputmode="numeric" value="${esc(o.s[j][0])}" data-fd="s:${j}:0"> - <input class="sn" type="number" inputmode="numeric" value="${esc(o.s[j][1])}" data-fd="s:${j}:1"></span>`);
-  h=`<b>${isNew?'بازی جدید':'ویرایش بازی '+(S.matches.findIndex(x=>x.id===o.id)+1)}</b>`+fl('تاریخ',dbtn(o.date))+fl('ترتیب',`<select data-fd="order">${optsOf(['','اول','دوم'],o.order)}</select>`)+fl('سانس',`<select data-fd="slot">${sOpts(o.slot,o.date)}</select>`)+fl('تیم اول',`<select data-fd="a">${tOpts(o.a)}</select>`)+fl('تیم دوم',`<select data-fd="b">${tOpts(o.b)}</select>`)+si(0)+si(1)+si(2)
+  const tg=`<div class="tg"><div><div class="mut" style="padding:2px">تیم اول</div><select data-fd="a">${tOpts(o.a)}</select></div><div><div class="mut" style="padding:2px">تیم دوم</div><select data-fd="b">${tOpts(o.b)}</select></div>${[0,1,2].map(j=>[0,1].map(i=>`<label class="sc"><span>ست ${j+1}</span><input type="number" inputmode="numeric" value="${esc(o.s[j][i])}" data-fd="s:${j}:${i}"></label>`).join('')).join('')}</div>`;
+  h=`<b>${isNew?'بازی جدید':'ویرایش بازی '+(S.matches.findIndex(x=>x.id===o.id)+1)}</b>`+fl('تاریخ',dbtn(o.date))+fl('ترتیب',`<select data-fd="order">${optsOf(['','اول','دوم'],o.order)}</select>`)+fl('سانس',`<select data-fd="slot">${sOpts(o.slot,o.date)}</select>`)+tg
    +(isNew?'':`<div class="r" style="margin-top:8px"><button class="b o" data-pp="1">تعویق به سانس بعدی</button><button class="b o" data-ub="1"${S.pp.some(x=>x.id===o.id)?'':' disabled'}>برگشت به جای خود</button></div><p class="mut" style="padding:4px">تعویق: این بازی به اولین بازی سانس بعدی می‌رود و بازی‌های بعدی یک جایگاه عقب می‌روند (فوراً اعمال می‌شود).</p>`)}
  if(k==='p'){
   h=`<b>${isNew?'جلسه جدید':'ویرایش جلسه '+(S.practices.findIndex(x=>x.id===o.id)+1)}</b>`+fl('تاریخ',dbtn(o.date))+fl('تیم‌ها',`<button class="d" data-pt="1">${o.teams.length?esc(o.teams.map(nm).join(' / ')):'انتخاب تیم‌ها'}</button>`)+fl('سانس',`<select data-fd="slot">${sOpts(o.slot,o.date)}</select>`)+fl('دقیقه',`<input type="number" inputmode="numeric" value="${esc(o.min)}" data-fd="min">`)+fl('نوع جلسه',`<input value="${esc(o.type)}" data-fd="type" placeholder="مثلاً حرفه‌ای">`)}
