@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
 <style>
-:root{color-scheme:light;--bg:#fffaf0;--card:#fffefa;--ink:#35290f;--mut:#8a7648;--pri:#fdd23c;--acc:#fdd23c;--line:#f0e5c8;--row:#fff6df;--bad:#b45309;--ok:#8a5a00}
+:root{color-scheme:light;--bg:#fffaf0;--card:#fffefa;--ink:#35290f;--mut:#8a7648;--pri:#fdd23c;--acc:#fdd23c;--line:#f0e5c8;--sep:#e2d4a8;--row:#fff6df;--bad:#b45309;--ok:#8a5a00}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,Tahoma,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
 header{display:flex;align-items:center;gap:10px;background:var(--pri);color:var(--ink);padding:14px 16px;font-size:20px;font-weight:700}
@@ -22,10 +22,10 @@ section{display:none}section.on{display:block}
 h3{margin:14px 0 8px;font-size:16px}
 .card{background:var(--card);border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid var(--line)}
 .wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--line);margin-bottom:10px}
-table{border-collapse:collapse;width:100%;min-width:640px;background:var(--card);text-align:center;font-size:14px}
+table{border-collapse:separate;border-spacing:0;width:100%;min-width:640px;background:var(--card);text-align:center;font-size:14px}
 table.w1{min-width:1150px}table.w2{min-width:760px}
 th{background:var(--pri);color:var(--ink);padding:10px 6px;white-space:nowrap;font-size:13px}
-td{padding:6px 4px;border-top:1px solid var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}
+td{padding:6px 4px;border-top:1px solid var(--sep);font-variant-numeric:tabular-nums;white-space:nowrap}
 tr:nth-child(even) td{background:var(--row)}
 td.t{font-weight:700}
 td input,td select{width:100%;min-width:70px;padding:6px;font-size:14px}
@@ -50,7 +50,7 @@ button.x{background:none;border:0;color:var(--bad);font-size:16px;padding:4px 8p
 .sp{display:inline-flex;flex-direction:column;align-items:center}.sp .x{padding:2px 8px;line-height:1;color:var(--ink)}.sp b{font-size:18px}
 .tm{display:flex;align-items:center;gap:4px}
 .fl{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:8px 0}.fl label{color:var(--mut);font-size:14px;min-width:60px}.fl select,.fl input{flex:1;min-width:0}.fl input.sn{width:60px;flex:none;text-align:center}
-th,td{border-left:1px solid #ecdfbd}
+th,td{border-left:1px solid var(--sep)}
 th:last-child,td:last-child{border-left:0}
 .dd:disabled{opacity:.22;text-decoration:line-through}
 td{padding:8px 8px}th{padding:10px 8px}
@@ -60,6 +60,7 @@ body{padding-left:max(0px,env(safe-area-inset-left));padding-right:max(0px,env(s
 @media(orientation:landscape) and (max-height:520px){header{padding:6px 14px;font-size:16px}header img{width:26px;height:26px}nav button{padding:7px 2px}main{padding:8px}.cal{max-height:92vh}}
 .tg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}.tg select{width:100%}
 .sc{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mut)}.sc input{flex:1;min-width:0;width:100%;text-align:center;direction:ltr}
+button.b.o.sel{background:var(--pri);border-color:var(--pri)}
 button:disabled{opacity:.4}
 #toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#35290f;color:#fffaf0;padding:10px 16px;border-radius:10px;display:none;z-index:30;font-size:14px;max-width:90%}
 </style>
@@ -74,10 +75,11 @@ button:disabled{opacity:.4}
 <input type="file" id="xf" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
 <input type="file" id="jf" accept=".json,application/json" hidden>
 <script>
+try{localStorage.removeItem('volley-gh')}catch(e){}
 const KEY='volley-v1',$=id=>document.getElementById(id);
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const en=s=>String(s??'').replace(/[۰-۹]/g,c=>c.charCodeAt(0)-1776).replace(/[٠-٩]/g,c=>c.charCodeAt(0)-1632);
+const en=s=>String(s??'').replace(/[۰-۹]/g,c=>c.charCodeAt(0)-1776).replace(/[٠-٩]/g,c=>c.charCodeAt(0)-1632).replace(/[–—−]/g,'-');
 const pd=s=>String(s);
 const p2=n=>String(n).padStart(2,'0');
 /* ---- Jalali ---- */
@@ -105,9 +107,9 @@ const normDate=s=>{const m=/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/.exec(en(s));return 
 /* ---- state ---- */
 function norm(d){d=d&&typeof d==='object'?d:{};
  d.teams=(d.teams||[]).map(t=>({id:t.id||uid(),name:t.name||'',level:t.level||''}));
- d.matches=(d.matches||[]).map(g=>({id:g.id||uid(),date:g.date||'',order:g.order||'',slot:g.slot||'',a:g.a||'',b:g.b||'',
+ d.matches=(d.matches||[]).map(g=>({id:g.id||uid(),date:en(g.date||''),order:g.order||'',slot:en(g.slot||''),a:g.a||'',b:g.b||'',
   s:g.s||[0,1,2].map(i=>g.sets&&g.sets[i]?[g.sets[i][0],g.sets[i][1]]:['',''])}));
- d.practices=(d.practices||[]).map(p=>({id:p.id||uid(),date:p.date||'',teams:p.teams||[],slot:p.slot||'',min:p.min??90,type:p.type||''}));
+ d.practices=(d.practices||[]).map(p=>({id:p.id||uid(),date:en(p.date||''),teams:p.teams||[],slot:en(p.slot||''),min:+en(p.min??90)||90,type:p.type||''}));
  d.slots=(d.slots&&d.slots.length?d.slots:[{sh:18,sm:0,eh:19,em:30},{sh:19,sm:30,eh:21,em:0}]).map(s=>({id:s.id||uid(),day:s.day||'',sh:+s.sh||0,sm:+s.sm||0,eh:+s.eh||0,em:+s.em||0}));
  d.pp=Array.isArray(d.pp)?d.pp:[];
  d.need=+d.need||4;return d}
@@ -133,11 +135,11 @@ function stats(){const m={},fins=[];S.teams.forEach(t=>m[t.id]={id:t.id,name:t.n
 /* ---- render ---- */
 const WD=['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه'],ORD=['اول','دوم','سوم','چهارم'];
 const slotLabel=s=>`${s.day?s.day+' ':''}${p2(s.sh)}:${p2(s.sm)}-${p2(s.eh)}:${p2(s.em)}`;
-const slotStart=l=>{const m=/(\d+):(\d+)-/.exec(l||'');return m?+m[1]*60+ +m[2]:0};
+const slotStart=l=>{const m=/(\d+):(\d+)-/.exec(en(l||''));return m?+m[1]*60+ +m[2]:0};
 const nextDay=s=>{const[y,m,d]=parse(s),g=j2g(y,m,d),n=new Date(g[0],g[1]-1,g[2]+1);return fmt(...g2j(n.getFullYear(),n.getMonth()+1,n.getDate()))};
 const mkey=g=>dkey(g.date)*100000+slotStart(g.slot)*10+Math.max(0,ORD.indexOf(g.order));
-const slotMin=l=>{const m=/(\d+):(\d+)-(\d+):(\d+)$/.exec(l||'');if(!m)return 0;const d=(+m[3]*60+ +m[4])-(+m[1]*60+ +m[2]);return d<0?d+1440:d};
-const tOnly=l=>(String(l||'').match(/\d{1,2}:\d{2}-\d{1,2}:\d{2}/)||[l||''])[0];
+const slotMin=l=>{const m=/(\d+):(\d+)-(\d+):(\d+)$/.exec(en(l||''));if(!m)return 0;const d=(+m[3]*60+ +m[4])-(+m[1]*60+ +m[2]);return d<0?d+1440:d};
+const tOnly=l=>{const s=en(l||'');return(s.match(/\d{1,2}:\d{2}-\d{1,2}:\d{2}/)||[s])[0]};
 const slotDays=()=>new Set(S.slots.filter(s=>s.day).map(s=>s.day));
 const firstAllowed=d=>{const D=slotDays();if(!D.size||!parse(d))return d;let x=d;for(let i=0;i<14;i++){if(D.has(dayName(x)))return x;x=nextDay(x)}return d};
 const slotsFor=date=>{const dn=dayName(date);return S.slots.filter(s=>!dn||!s.day||s.day===dn).map(slotLabel)};
@@ -172,7 +174,7 @@ function render(){
 let mh=null,back=null,DR=null,SDR=null;
 const M=h=>{$('modal').innerHTML=h;$('modal').style.display='flex'};
 const closeM=()=>{$('modal').style.display='none';$('modal').innerHTML='';mh=null;const b=back;back=null;render();if(b)b()};
-function confirmDel(txt,fn){back=null;M(`<div class="cal"><b>${txt}</b><div class="r" style="margin-top:14px"><button class="b" style="background:var(--bad)" data-yes="1">بله، حذف شود</button><button class="b o" data-mclose="1">انصراف</button></div></div>`);
+function confirmDel(txt,fn,yes){back=null;M(`<div class="cal"><b>${txt}</b><div class="r" style="margin-top:14px"><button class="b" style="background:var(--bad)" data-yes="1">${yes||'بله، حذف شود'}</button><button class="b o" data-mclose="1">انصراف</button></div></div>`);
  mh=e=>{if(e.target.closest('[data-yes]')){fn();save();closeM()}}}
 function pick(cur,cb,after){back=after||null;const sel=parse(cur);let[y,m]=sel||today();
  const draw=()=>{const off=(wd(y,m,1)+1)%7,n=mlen(y,m),td=today(),D=slotDays();let c='<i></i>'.repeat(off);
@@ -205,14 +207,16 @@ function commitEdit(){syncDraft();const{k,o,isNew}=DR;
  const L=k==='m'?S.matches:k==='p'?S.practices:S.teams,i=L.findIndex(x=>x.id===o.id);
  if(i>=0)L[i]=o;else L.push(o);
  if(k==='p')S.practices.sort(dcmp);
- save();DR=null;closeM()}
+ const act=DR.act;save();DR=null;closeM();
+ if(act==='pp')postpone(o.id);else if(act==='ub')undoPP(o.id);
+ if(act)render()}
 function showEdit(){back=null;const{k,o,isNew}=DR,fl=(l,h)=>`<div class="fl"><label>${l}</label>${h}</div>`;let h='';
  const dbtn=d=>`<button class="d" data-pd="1">${d?fd(d):'انتخاب تاریخ'}</button>`;
  if(k==='m'){
   const si=j=>fl('ست '+(j+1),`<span dir="ltr"><input class="sn" type="number" inputmode="numeric" value="${esc(o.s[j][0])}" data-fd="s:${j}:0"> - <input class="sn" type="number" inputmode="numeric" value="${esc(o.s[j][1])}" data-fd="s:${j}:1"></span>`);
   const tg=`<div class="tg"><div><div class="mut" style="padding:2px">تیم اول</div><select data-fd="a">${tOpts(o.a)}</select></div><div><div class="mut" style="padding:2px">تیم دوم</div><select data-fd="b">${tOpts(o.b)}</select></div>${[0,1,2].map(j=>[0,1].map(i=>`<label class="sc"><span>ست ${j+1}</span><input type="number" inputmode="numeric" value="${esc(o.s[j][i])}" data-fd="s:${j}:${i}"></label>`).join('')).join('')}</div>`;
   h=`<b>${isNew?'بازی جدید':'ویرایش بازی '+(S.matches.findIndex(x=>x.id===o.id)+1)}</b>`+fl('تاریخ',dbtn(o.date))+fl('ترتیب',`<select data-fd="order">${optsOf(['','اول','دوم'],o.order)}</select>`)+fl('سانس',`<select data-fd="slot">${sOpts(o.slot,o.date)}</select>`)+tg
-   +(isNew?'':`<div class="r" style="margin-top:8px"><button class="b o" data-pp="1">تعویق به سانس بعدی</button><button class="b o" data-ub="1"${S.pp.some(x=>x.id===o.id)?'':' disabled'}>برگشت به جای خود</button></div><p class="mut" style="padding:4px">تعویق: این بازی به اولین بازی سانس بعدی می‌رود و بازی‌های بعدی یک جایگاه عقب می‌روند (فوراً اعمال می‌شود).</p>`)}
+   +(isNew?'':`<div class="r" style="margin-top:8px"><button class="b o${DR.act==='pp'?' sel':''}" data-pp="1">تعویق به سانس بعدی</button><button class="b o${DR.act==='ub'?' sel':''}" data-ub="1"${S.pp.some(x=>x.id===o.id)?'':' disabled'}>برگشت به جای خود</button></div><p class="mut" style="padding:4px">${DR.act==='pp'?'✓ تعویق انتخاب شد؛ بعد از زدن «تأیید» اعمال می‌شود (با «لغو» انصراف می‌دهی).':DR.act==='ub'?'✓ برگشت انتخاب شد؛ بعد از زدن «تأیید» اعمال می‌شود (با «لغو» انصراف می‌دهی).':'تعویق: این بازی به روز و سانس بعدی می‌رود و بازی اول آن سانس می‌شود؛ ردیف‌های بعدی به‌ترتیب پشت سرش تا آخر جدول جلو می‌روند. بعد از «تأیید» اعمال می‌شود.'}</p>`)}
  if(k==='p'){
   h=`<b>${isNew?'جلسه جدید':'ویرایش جلسه '+(S.practices.findIndex(x=>x.id===o.id)+1)}</b>`+fl('تاریخ',dbtn(o.date))+fl('تیم‌ها',`<button class="d" data-pt="1">${o.teams.length?esc(o.teams.map(nm).join(' / ')):'انتخاب تیم‌ها'}</button>`)+fl('سانس',`<select data-fd="slot">${sOpts(o.slot,o.date)}</select>`)+fl('دقیقه',`<input type="number" inputmode="numeric" value="${esc(o.min)}" data-fd="min">`)+fl('نوع جلسه',`<input value="${esc(o.type)}" data-fd="type" placeholder="مثلاً حرفه‌ای">`)}
  if(k==='t'){
@@ -223,8 +227,8 @@ function showEdit(){back=null;const{k,o,isNew}=DR,fl=(l,h)=>`<div class="fl"><la
   if(d.cancel){DR=null;closeM();return}
   if(d.pd){syncDraft();pick(DR.o.date,v=>{DR.o.date=v;fixSlot(DR.o)},()=>showEdit())}
   if(d.pt){syncDraft();pickTeams(DR.o,()=>showEdit())}
-  if(d.pp){const id=DR.o.id;postpone(id);render();startEdit('m',id)}
-  if(d.ub){const id=DR.o.id;undoPP(id);render();startEdit('m',id)}}}
+  if(d.pp){syncDraft();DR.act=DR.act==='pp'?null:'pp';showEdit()}
+  if(d.ub){syncDraft();DR.act=DR.act==='ub'?null:'ub';showEdit()}}}
 /* ---- auto schedule ---- */
 function genSchedule(start,per,replace){
  const slots=S.slots.filter(s=>s.day).sort((a,b)=>WD.indexOf(a.day)-WD.indexOf(b.day)||(a.sh*60+a.sm)-(b.sh*60+b.sm));
@@ -239,7 +243,7 @@ function genSchedule(start,per,replace){
  let date=parse(start)?start:fmt(...today()),sess=0,guard=0,made=0;
  while(pairs.length&&guard++<900){
   const dn=dayName(date);
-  slots.filter(s=>s.day===dn).forEach(s=>{if(!pairs.length)return;
+  [daySlot(dn)].filter(Boolean).forEach(s=>{if(!pairs.length)return;
    const lbl=slotLabel(s),ex=S.matches.filter(g=>g.date===date&&g.slot===lbl),busy=new Set();
    ex.forEach(g=>{busy.add(g.a);busy.add(g.b)});
    for(let k=ex.length;k<per&&pairs.length;k++){let best=-1,bs=1e12;
@@ -264,28 +268,32 @@ function openGen(){back=null;
   per=+$('gp').value;if($('gr'))rep=$('gr').checked;
   if(t.dataset.gd)pick(start,v=>{if(v)start=v},()=>draw());
   if(t.dataset.go){if(genSchedule(start,per,rep))closeM()}};draw()}
-function nextSess(date,lbl){const sl=S.slots.filter(s=>s.day);let d=date,st=slotStart(lbl),first=true;
- for(let n=0;n<400;n++){const dn=dayName(d),c=sl.find(s=>s.day===dn&&(!first||s.sh*60+s.sm>st));if(c)return{date:d,slot:slotLabel(c)};d=nextDay(d);first=false}return null}
-function postpone(id){
- const L=S.matches.slice().sort((a,b)=>mkey(a)-mkey(b)),X=L.find(g=>g.id===id);if(!X)return false;
- const free=g=>res(g).st==='برگزار نشده',sk=g=>g.date+'|'+g.slot;
- if(!free(X)){toast('این بازی نتیجه دارد و قابل تعویق نیست');return false}
+const daySlot=dn=>S.slots.find(s=>s.day===dn);
+function nextSess(date){if(!parse(date))return null;let d=date;for(let n=0;n<400;n++){d=nextDay(d);const s=daySlot(dayName(d));if(s)return{date:d,slot:slotLabel(s)}}return null}
+function postpone(id){try{
+ const L=S.matches,X=L.find(g=>g.id===id);if(!X)return false;
+ const free=g=>!res(g).fin,sk=g=>g.date+'|'+g.slot;
+ if(!free(X)){toast('این بازی نتیجه‌ی نهایی دارد و قابل تعویق نیست');return false}
+ if(!parse(X.date)){toast('این بازی تاریخ ندارد؛ اول تاریخ را مشخص کنید');return false}
+ if(!S.slots.some(s=>s.day)){toast('در تنظیمات برای سانس‌ها روز هفته مشخص کنید');return false}
  const cnt={};L.forEach(g=>cnt[sk(g)]=(cnt[sk(g)]||0)+1);
  const per=Math.min(ORD.length,Math.max(1,...Object.values(cnt)));
- const after=L.filter(g=>g.id!==id&&free(g)&&mkey(g)>mkey(X)&&sk(g)!==sk(X));
- const chain=[X,...after],ids=new Set(chain.map(g=>g.id)),pk=p=>p.date+'|'+p.slot+'|'+p.order;
- const occ=new Set(L.filter(g=>!ids.has(g.id)).map(g=>pk(g)));
- const first=p=>{const n=nextSess(p.date,p.slot);return n?{...n,order:ORD[0]}:null};
- const nextPos=p=>{const i=ORD.indexOf(p.order);return i>=0&&i<per-1?{date:p.date,slot:p.slot,order:ORD[i+1]}:first(p)};
- const P=after.map(g=>({date:g.date,slot:g.slot,order:g.order}));
- let np=after.length?nextPos(P[P.length-1]):first(X),guard=0;
- while(np&&occ.has(pk(np))&&guard++<50)np=nextPos(np);
- if(!np){toast('سانس خالی بعدی پیدا نشد؛ در تنظیمات سانس اضافه کنید');return false}
- P.push(np);
+ /* این بازی و همه‌ی بازی‌های آزادِ بعدی (به ترتیب جدول) */
+ const movers=L.filter(g=>g===X||(free(g)&&parse(g.date)&&mkey(g)>mkey(X))).sort((a,b)=>mkey(a)-mkey(b));
+ const mv=new Set(movers.map(g=>g.id)),fixed=L.filter(g=>!mv.has(g.id));
+ let cur=nextSess(X.date,X.slot);if(!cur){toast('سانس خالی بعدی پیدا نشد؛ در تنظیمات سانس اضافه کنید');return false}
+ const plan=[],put=[];
+ const here=s=>fixed.concat(put).filter(g=>g.date===s.date&&g.slot===s.slot);
+ for(const m of movers){
+  let h=here(cur);
+  while(h.length>=per){cur=nextSess(cur.date,cur.slot);if(!cur){toast('سانس خالی کافی پیدا نشد؛ در تنظیمات سانس اضافه کنید');return false}h=here(cur)}
+  const used=new Set(h.map(g=>g.order)),o=ORD.find(x=>!used.has(x))||ORD[0];
+  const pos={date:cur.date,slot:cur.slot,order:o};plan.push([m,pos]);put.push({...pos})}
  S.pp.push({id,snap:S.matches.map(g=>[g.id,g.date,g.slot,g.order])});
- chain.forEach((g,k)=>{g.date=P[k].date;g.slot=P[k].slot;g.order=P[k].order});
+ plan.forEach(([m,pos])=>{m.date=pos.date;m.slot=pos.slot;m.order=pos.order});
  S.matches.sort((a,b)=>mkey(a)-mkey(b));save();
- toast('بازی به '+fd(X.date)+' ('+X.order+') منتقل شد و بازی‌های بعدی یک جایگاه عقب رفتند');return true}
+ toast('بازی به '+fd(X.date)+' ('+X.order+') منتقل شد و '+(movers.length-1)+' بازی بعدی هم به‌ترتیب جلو رفتند');return true
+}catch(e){toast('خطا در تعویق: '+e.message);return false}}
 function undoPP(id){let i=-1;S.pp.forEach((e,k)=>{if(e.id===id)i=k});if(i<0){toast('چیزی برای برگشت نیست');return false}
  S.pp[i].snap.forEach(([gid,date,slot,order])=>{const g=S.matches.find(x=>x.id===gid);if(g){g.date=date;g.slot=slot;g.order=order}});
  S.pp.length=i;S.matches.sort((a,b)=>mkey(a)-mkey(b));save();toast('برنامه به حالت قبل از تعویق برگشت');return true}
@@ -316,8 +324,8 @@ function importX(k,file){if(typeof XLSX==='undefined'){toast('کتابخانه �
   if(ix.some(i=>i<0))throw 0;
   const data=rows.slice(1).filter(r=>r.some(c=>String(c).trim()!=='')),g=(r,i)=>String(r[ix[i]]??'').trim();
   if(k==='t')data.forEach(r=>{const id=tid(g(r,0));if(id)S.teams.find(t=>t.id===id).level=g(r,1)});
-  if(k==='m'){S.pp=[];S.matches=data.map(r=>({id:uid(),date:normDate(g(r,0)),order:g(r,1),slot:mapSlot(g(r,2),normDate(g(r,0))),a:tid(g(r,3)),b:tid(g(r,4)),s:[[5,6],[7,8],[9,10]].map(([a,b])=>[en(g(r,a)),en(g(r,b))])}))}
-  if(k==='p')S.practices=data.map(r=>({id:uid(),date:normDate(g(r,0)),teams:g(r,1).split(/\s*[\/،,؛;]\s*/).map(tid).filter(Boolean),slot:mapSlot(g(r,2),normDate(g(r,0))),min:+en(g(r,3))||90,type:g(r,4)})).sort(dcmp);
+  if(k==='m'){S.pp=[];S.matches=data.map(r=>({id:uid(),date:normDate(g(r,0)),order:g(r,1),slot:mapSlot(en(g(r,2)),normDate(g(r,0))),a:tid(g(r,3)),b:tid(g(r,4)),s:[[5,6],[7,8],[9,10]].map(([a,b])=>[en(g(r,a)),en(g(r,b))])}))}
+  if(k==='p')S.practices=data.map(r=>({id:uid(),date:normDate(g(r,0)),teams:g(r,1).split(/\s*[\/،,؛;]\s*/).map(tid).filter(Boolean),slot:mapSlot(en(g(r,2)),normDate(g(r,0))),min:+en(g(r,3))||90,type:g(r,4)})).sort(dcmp);
   save();render();toast('ورود اطلاعات انجام شد ('+data.length+' ردیف)')}catch(e){toast('فایل با قالب جور نیست؛ «دریافت قالب» را بزنید')}};
  fr.readAsArrayBuffer(file)}
 function commitSlots(){const old=new Map(S.slots.map(s=>[s.id,slotLabel(s)])),map=new Map();
@@ -352,6 +360,7 @@ document.addEventListener('click',e=>{
  if(d.bk==='exp')saveFile(new File([JSON.stringify(S)],`volley-backup-${ds()}.json`,{type:'application/json'}));
  if(d.bk==='imp')$('jf').click()});
 document.addEventListener('change',e=>{const t=e.target,f=t.dataset.f;
+
  if(t.dataset.sd){if(!SDR)SDR=S.slots.map(s=>({...s}));SDR.find(x=>x.id===t.dataset.sd).day=t.value;render();return}
  if(!f)return;const[k]=f.split(':');
  if(k==='x'){S.need=Math.max(1,+t.value||4);save();render()}});
